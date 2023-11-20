@@ -4,11 +4,12 @@
     margin: 10px;
     text-align: center;
     display: flex;
+    flex-wrap: wrap; /* Allow items to wrap on small screens */
     align-items: center; /* Center vertically */
 }
 
 .golfer-image {
-    max-width: 100%;
+    max-width: 20%;
     border-radius: 50%;
     margin-right: 20px; /* Add margin for spacing */
 }
@@ -16,4 +17,16 @@
 .golfer-info {
     flex-grow: 1; /* Allow info to take remaining space */
     text-align: left; /* Align text to the left */
+}
+
+@media (max-width: 768px) {
+    .golfer-image {
+        max-width: 100%; /* Set the image width to 100% on small screens */
+        margin-right: 0; /* Remove margin for stacking */
+        margin-bottom: 10px; /* Add margin between image and table on small screens */
+    }
+
+    .golfer-info {
+        order: -1; /* Change the order to stack info on top */
+    }
 }

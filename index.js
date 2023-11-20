@@ -38,7 +38,7 @@ class Golfer {
 
     }
     calculateWinningPercentage() {
-        return (((this.singlesWins + this.doublesWins) / this.totalMatches) * 100 || 0) +  "%"; 
+        return Math.round(((((this.singlesWins + this.doublesWins) + ((this.singlesTie + this.doublesTie) / 2))/ this.totalMatches) * 100 || 0)) +  "%"; 
     }
 }
 var golfers;

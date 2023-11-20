@@ -6,8 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cabot Cup</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/cosmo/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
@@ -41,7 +46,7 @@
                         Statistics
                     </a>
                     <div class="dropdown-menu" aria-labelledby="statsDropdown">
-                        <a class="dropdown-item" hx-get="/listPlayers" hx-trigger="click" hx-target="#contentContainer" >Players</a>
+                        <a class="dropdown-item" hx-get="/listPlayers" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Players</a>
                         <a class="dropdown-item" href="#">Win-Loss</a>
                     </div>
                 </li>
@@ -57,10 +62,6 @@
         <p>This is the official website for the Cabot Cup. Explore the site using the navigation links above.</p>
     </div>
 
-    <!-- Bootstrap JS and Popper.js (required for Bootstrap JavaScript components) -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </body>
 
