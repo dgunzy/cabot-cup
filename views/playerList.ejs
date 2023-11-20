@@ -1,4 +1,45 @@
-<div class="user-card">
-    <img src="/res/dan_image.jpg" alt="Dan" >
-    <h3>Dan</h3>
+<div class="container mt-4">
+    <h2>Golfer List</h2>
+    <% golfers.forEach(function(golfer) { %>
+        <div class="golfer-card">
+            <div class="golfer-info">
+                <h4><%= golfer.name %></h4>
+                <img src="<%= golfer.imageSrc %>" alt="<%= golfer.name %>" class="golfer-image">
+                <p>Total Matches: <%= golfer.totalMatches %></p>
+                <p>Cups Played: <%= golfer.totalCups %></p>
+                <p>Winning Percentage: <%= golfer.calculateWinningPercentage() %></p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Match Type</th>
+                            <th scope="col">Wins</th>
+                            <th scope="col">Losses</th>
+                            <th scope="col">Ties</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total</td>
+                            <td><%= golfer.totalWins %></td>
+                            <td><%= golfer.totalLoss %></td>
+                            <td><%= golfer.totalTie %></td>
+                        </tr>
+                        <tr>
+                            <td>Singles</td>
+                            <td><%= golfer.singlesWins %></td>
+                            <td><%= golfer.singlesLoss %></td>
+                            <td><%= golfer.singlesTie %></td>
+                        </tr>
+                        <tr>
+                            <td>Doubles</td>
+                            <td><%= golfer.doublesWins %></td>
+                            <td><%= golfer.doublesLoss %></td>
+                            <td><%= golfer.doublesTie %></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    <% }); %>
 </div>
