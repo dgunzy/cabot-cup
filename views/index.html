@@ -47,7 +47,9 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="statsDropdown">
                         <a class="dropdown-item" hx-get="/listPlayers" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Players</a>
-                        <a class="dropdown-item" href="#">Win-Loss</a>
+                        <a class="dropdown-item" hx-get="/totalWinsLoss" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Match Wins / Losses</a>
+                        <a class="dropdown-item" href="#" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Singles Wins / Losses</a>
+                        <a class="dropdown-item" href="#" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Team </a>
                     </div>
                 </li>
                 <li class="nav-item">
