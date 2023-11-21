@@ -105,6 +105,65 @@ app.get('/totalWinsLoss', async (request, response) => {
     }
 })
 
+app.get('/singlesWinsLoss', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+            // Connect to MongoDB
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+            // Access the database and collection
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+            // Fetch golfer data from MongoDB
+            const golfersData = await collection.find().toArray();
+    
+            // Create Golfer objects
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            // Use the golfers array for various displays
+            response.render('singlesWinLoss', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        response.render('singlesWinLoss', { golfers });
+    }
+})
+
+app.get('/teamWinsLoss', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+            // Connect to MongoDB
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+            // Access the database and collection
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+            // Fetch golfer data from MongoDB
+            const golfersData = await collection.find().toArray();
+    
+            // Create Golfer objects
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            // Use the golfers array for various displays
+            
+            response.render('teamWinLoss', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        response.render('teamWinLoss', { golfers });
+    }
+})
+
 
 
 
