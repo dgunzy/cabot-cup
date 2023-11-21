@@ -180,7 +180,7 @@ app.post('/sort-cups', (request, response) => {
 
 app.post('/sort-winning', (request, response) => {
 
-    
+    //This Logic does not work
     golfers.sort((a, b) => b.calculateWinningPercentage().localeCompare(a.calculateWinningPercentage()));
 
 
