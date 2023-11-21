@@ -164,6 +164,28 @@ app.get('/teamWinsLoss', async (request, response) => {
     }
 })
 
+app.post('/sort-name', (request, response) => {
+
+    golfers.sort((a,b) => a.name.localeCompare(b.name));
+
+    response.render('playerList', { golfers });
+});
+
+app.post('/sort-cups', (request, response) => {
+
+    golfers.sort((a,b) => b.totalCups - a.totalCups );
+
+    response.render('playerList', { golfers });
+});
+
+app.post('/sort-winning', (request, response) => {
+
+    
+    golfers.sort((a, b) => b.calculateWinningPercentage().localeCompare(a.calculateWinningPercentage()));
+
+
+    response.render('playerList', { golfers });
+});
 
 
 

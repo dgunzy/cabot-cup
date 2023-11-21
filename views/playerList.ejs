@@ -1,5 +1,19 @@
 <div class="container mt-4">
     <h2>Golfer List</h2>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Sort By
+        </button>
+        <div class="dropdown-menu" aria-labelledby="sortGolfers">
+            <a class="dropdown-item"  hx-post="/sort-name" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Sort By Name</a>
+            <a class="dropdown-item"  hx-post="/sort-cups" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Sort By Total Cups</a>
+            <a class="dropdown-item"  hx-post="/sort-winning" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Sort By Winnin Percentage</a>
+            <!-- Add more sorting options as needed -->
+        </div>
+    </div>
+   
+    
     <% golfers.forEach(function(golfer) { %>
     <div class="golfer-card">
         <img src="<%= golfer.imageSrc %>" alt="<%= golfer.name %>" class="golfer-image">

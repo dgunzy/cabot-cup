@@ -1,38 +1,27 @@
 [
+  
     {
-      "name": "Dan G",
-      "imageSrc": "/res/dan_image.jpg",
-      "teamWins": 4,
-      "teamLoss": 1,
-      "singlesWins": 2,
-      "singlesLoss": 3,
-      "singlesTie": 0,
-      "doublesWins": 4,
-      "doublesLoss": 6,
-      "doublesTie": 0
-    },
-    {
-      "name": "Jane Smith",
+      "name": "Wally",
       "imageSrc": "/res/empty_profile.jpeg",
-      "teamWins": 12,
-      "teamLoss": 8,
-      "singlesWins": 7,
-      "singlesLoss": 5,
-      "singlesTie": 1,
-      "doublesWins": 5,
-      "doublesLoss": 3,
+      "teamWins": 1,
+      "teamLoss": 0,
+      "singlesWins": 1,
+      "singlesLoss": 0,
+      "singlesTie": 0,
+      "doublesWins": 1,
+      "doublesLoss": 0,
       "doublesTie": 0
     },
     {
-      "name": "Bob Johnson",
-      "imageSrc": "bob_johnson.jpg",
-      "teamWins": 19,
-      "teamLoss": 1,
-      "singlesWins": 15,
+      "name": "Bill",
+      "imageSrc": "/res/empty_profile.jpeg",
+      "teamWins": 3,
+      "teamLoss": 0,
+      "singlesWins": 1,
       "singlesLoss": 1,
-      "singlesTie": 3,
-      "doublesWins": 10,
-      "doublesLoss": 0,
+      "singlesTie": 1,
+      "doublesWins": 4,
+      "doublesLoss": 1,
       "doublesTie": 0
     }
   ]
