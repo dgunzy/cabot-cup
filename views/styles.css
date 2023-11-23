@@ -19,6 +19,7 @@
     text-align: left; /* Align text to the left */
 }
 
+
 @media (max-width: 768px) {
     .golfer-image {
         max-width: 100%; /* Set the image width to 100% on small screens */
@@ -30,3 +31,4 @@
         order: -1; /* Change the order to stack info on top */
     }
 }
+

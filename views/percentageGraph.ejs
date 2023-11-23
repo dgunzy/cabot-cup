@@ -18,12 +18,9 @@
             return golfer.name;
         });
 
-        var teamWins = golfersData.map(function (golfer) {
-            return golfer.teamWins;
-        });
-
-        var teamLoss = golfersData.map(function (golfer) {
-            return golfer.teamLoss;
+        var winningPercentages = golfersData.map(function (golfer) {
+            console.log(golfer.calculateWinningPercentage());
+            return golfer.calculateWinningPercentage();
         });
 
         var ctx = document.getElementById('teamPerformanceChart').getContext('2d');
@@ -33,16 +30,9 @@
                 labels: golferNames,
                 datasets: [
                     {
-                        label: 'Team Wins',
-                        data: teamWins,
+                        label: 'Winning Percentage',
+                        data: winningPercentages,
                         borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                        fill: false
-                    },
-                    {
-                        label: 'Team Loss',
-                        data: teamLoss,
-                        borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1,
                         fill: false
                     }

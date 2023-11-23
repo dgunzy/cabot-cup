@@ -10,9 +10,8 @@
 
 <body>
 
-    <div id="golferChartContainer" style="width: 80%; margin: auto;">
-        <canvas id="golferChart" width="400" height="400"></canvas>
-    </div>
+    <canvas id="golferChart" width="400" height="400"></canvas>
+
 
     <script>
         var golferData = <%- JSON.stringify(golfers) %>;
@@ -68,7 +67,9 @@
                     y: {
                         beginAtZero: true
                     }
-                }
+                },
+                responsive: true,
+                maintainAspectRatio: false
             }
         });
     </script>
