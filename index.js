@@ -35,6 +35,8 @@ class Golfer {
         this.totalLoss = singlesLoss + doublesLoss;
         this.totalTie = singlesTie + doublesTie;
         this.totalMatches = singlesWins + singlesLoss + singlesTie + doublesWins + doublesLoss + doublesTie;
+        this.winningPercentage = this.calculateWinningPercentage();
+
 
     }
     calculateWinningPercentage() {
@@ -183,7 +185,7 @@ app.get('/percentageGraph', async (request, response) => {
             golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
     
             // Use the golfers array for various displays
-            golfers.sort((a, b) => b.calculateWinningPercentage() - (a.calculateWinningPercentage()));
+            golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
             response.render('percentageGraph', { golfers });
         } catch (error) {
             console.error('Error fetching golfers:', error);
@@ -191,7 +193,7 @@ app.get('/percentageGraph', async (request, response) => {
             await client.close();
         } 
     } else {
-        golfers.sort((a, b) => b.calculateWinningPercentage() - (a.calculateWinningPercentage()));
+        golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
         response.render('percentageGraph', { golfers });
     }
 });
@@ -212,7 +214,7 @@ app.post('/sort-cups', (request, response) => {
 
 app.post('/sort-winning', (request, response) => {
 
-    golfers.sort((a, b) => b.calculateWinningPercentage() - (a.calculateWinningPercentage()));
+    golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
 
 
     response.render('playerList', { golfers });

@@ -19,8 +19,7 @@
         });
 
         var winningPercentages = golfersData.map(function (golfer) {
-            console.log(golfer.calculateWinningPercentage());
-            return golfer.calculateWinningPercentage();
+            return golfer.winningPercentage;
         });
 
         var ctx = document.getElementById('teamPerformanceChart').getContext('2d');
