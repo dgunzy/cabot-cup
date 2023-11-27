@@ -76,7 +76,7 @@ app.get('/listPlayers', async (request, response) => {
     } else {
         response.render('playerList', { golfers });
     }
-})
+});
 
 app.get('/totalWinsLoss', async (request, response) => {
     if(golfers == null || golfers === 'undefined') {
@@ -105,7 +105,7 @@ app.get('/totalWinsLoss', async (request, response) => {
     } else {
         response.render('totalWinsLoss', { golfers });
     }
-})
+});
 
 app.get('/singlesWinsLoss', async (request, response) => {
     if(golfers == null || golfers === 'undefined') {
@@ -150,10 +150,8 @@ app.get('/teamWinsLoss', async (request, response) => {
 
             const golfersData = await collection.find().toArray();
     
-            // Create Golfer objects
             golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
     
-            // Use the golfers array for various displays
             golfers.sort((a,b) => b.totalCups - a.totalCups );
             response.render('teamWinLoss', { golfers });
         } catch (error) {
@@ -181,10 +179,8 @@ app.get('/percentageGraph', async (request, response) => {
 
             const golfersData = await collection.find().toArray();
     
-            // Create Golfer objects
             golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
     
-            // Use the golfers array for various displays
             golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
             response.render('percentageGraph', { golfers });
         } catch (error) {
@@ -197,6 +193,12 @@ app.get('/percentageGraph', async (request, response) => {
         response.render('percentageGraph', { golfers });
     }
 });
+
+app.get('/2019', async (request, response) => {
+    
+        response.render('2019');
+    }
+);
 
 app.post('/sort-name', (request, response) => {
 
