@@ -1,0 +1,57 @@
+<div class="container mt-4">
+    <h2>Golfer List</h2>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="sortDropdown" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Sort By
+        </button>
+        <div class="dropdown-menu" aria-labelledby="sortGolfers">
+            <a class="dropdown-item"  hx-post="/sort-name" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Sort By Name</a>
+            <a class="dropdown-item"  hx-post="/sort-cups" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Sort By Total Cups</a>
+            <a class="dropdown-item"  hx-post="/sort-winning" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Sort By Winning Percentage</a>
+        </div>
+    </div>
+   
+    
+    <% golfers.forEach(function(golfer) { %>
+    <div class="golfer-card">
+        <img src="<%= golfer.imageSrc %>" alt="<%= golfer.name %>" class="golfer-image">
+        <div class="golfer-info">
+            <h4><%= golfer.name %></h4>
+            <p>Total Matches: <%= golfer.totalMatches %></p>
+            <p>Cups Played: <%= golfer.totalCups %></p>
+            <p>Match Winning Percentage: <%= golfer.winningPercentage + "%" %> </p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Match Type</th>
+                        <th scope="col">Wins</th>
+                        <th scope="col">Losses</th>
+                        <th scope="col">Ties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Total</td>
+                        <td><%= golfer.totalWins %></td>
+                        <td><%= golfer.totalLoss %></td>
+                        <td><%= golfer.totalTie %></td>
+                    </tr>
+                    <tr>
+                        <td>Singles</td>
+                        <td><%= golfer.singlesWins %></td>
+                        <td><%= golfer.singlesLoss %></td>
+                        <td><%= golfer.singlesTie %></td>
+                    </tr>
+                    <tr>
+                        <td>Doubles</td>
+                        <td><%= golfer.doublesWins %></td>
+                        <td><%= golfer.doublesLoss %></td>
+                        <td><%= golfer.doublesTie %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <% }); %>
+</div>

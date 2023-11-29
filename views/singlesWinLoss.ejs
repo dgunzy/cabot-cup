@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golfer Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <canvas id="golferChart" width="400" height="400"></canvas>
+
+
+    <script>
+        var golferData = <%- JSON.stringify(golfers) %>;
+
+        var golferNames = golferData.map(function (golfer) {
+            return golfer.name;
+        });
+
+        var singlesWins = golferData.map(function (golfer) {
+            return golfer.singlesWins;
+        });
+
+        var singlesLoss = golferData.map(function (golfer) {
+            return golfer.singlesLoss;
+        });
+
+        var singlesTie = golferData.map(function (golfer) {
+            return golfer.singlesTie;
+        });
+
+        var ctx = document.getElementById('golferChart').getContext('2d');
+
+        var golferChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: golferNames,
+                datasets: [
+                    {
+                        label: 'Singles Wins',
+                        data: singlesWins,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Singles Losses',
+                        data: singlesLoss,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Singles Ties',
+                        data: singlesTie,
+                        backgroundColor: 'rgba(34,139,34, 0.2)',
+                        borderColor: 'rgba(34,139,34, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+
+</body>
+
+</html>

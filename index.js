@@ -1,0 +1,265 @@
+const express = require('express');
+const app = express();
+require('dotenv').config();
+const path = require('path');
+const { MongoClient, ObjectId } = require("mongodb");
+
+const PORT = process.env.PORT || 3000;
+const DATABASE_URI = process.env.DATABASE_URI;
+const DATABASE_NAME = process.env.DATABASE_NAME;
+const COLLECTION_NAME = process.env.COLLECTION_NAME;
+const fs = require('fs');
+
+const ejs = require('ejs');
+
+app.set('view engine', 'ejs');
+
+app.use(express.static('views'));
+
+
+class Golfer {
+    constructor(id, name, imageSrc, teamWins, teamLoss, singlesWins, singlesLoss, singlesTie, doublesWins, doublesLoss, doublesTie) {
+        this._id = id;
+        this.name = name;
+        this.imageSrc = imageSrc;
+        this.teamWins = teamWins;
+        this.teamLoss = teamLoss;
+        this.singlesWins = singlesWins;
+        this.singlesLoss = singlesLoss;
+        this.singlesTie = singlesTie;
+        this.doublesWins = doublesWins;
+        this.doublesLoss = doublesLoss;
+        this.doublesTie = doublesTie;
+        this.totalCups = teamWins + teamLoss;
+        this.totalWins = singlesWins + doublesWins;
+        this.totalLoss = singlesLoss + doublesLoss;
+        this.totalTie = singlesTie + doublesTie;
+        this.totalMatches = singlesWins + singlesLoss + singlesTie + doublesWins + doublesLoss + doublesTie;
+        this.winningPercentage = this.calculateWinningPercentage();
+
+
+    }
+    calculateWinningPercentage() {
+        return Math.round(((((this.singlesWins + this.doublesWins) + ((this.singlesTie + this.doublesTie) / 2))/ this.totalMatches) * 100 || 0)); 
+    }
+}
+var golfers;
+
+
+
+
+app.get('/listPlayers', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+            // Connect to MongoDB
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+            // Access the database and collection
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+            // Fetch golfer data from MongoDB
+            const golfersData = await collection.find().toArray();
+    
+            // Create Golfer objects
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            // Use the golfers array for various displays
+            
+            response.render('playerList', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        response.render('playerList', { golfers });
+    }
+});
+
+app.get('/totalWinsLoss', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+            // Connect to MongoDB
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+            // Access the database and collection
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+            // Fetch golfer data from MongoDB
+            const golfersData = await collection.find().toArray();
+    
+            // Create Golfer objects
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            // Use the golfers array for various displays
+            response.render('totalWinsLoss', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        response.render('totalWinsLoss', { golfers });
+    }
+});
+
+app.get('/singlesWinsLoss', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+            // Connect to MongoDB
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+            // Access the database and collection
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+            // Fetch golfer data from MongoDB
+            const golfersData = await collection.find().toArray();
+    
+            // Create Golfer objects
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            // Use the golfers array for various displays
+            response.render('singlesWinLoss', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        response.render('singlesWinLoss', { golfers });
+    }
+})
+
+app.get('/teamWinsLoss', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+
+            const golfersData = await collection.find().toArray();
+    
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            golfers.sort((a,b) => b.totalCups - a.totalCups );
+            response.render('teamWinLoss', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        golfers.sort((a,b) => b.totalCups - a.totalCups );
+        response.render('teamWinLoss', { golfers });
+    }
+});
+
+app.get('/percentageGraph', async (request, response) => {
+    if(golfers == null || golfers === 'undefined') {
+        try {
+
+            const client = new MongoClient(DATABASE_URI);
+            await client.connect();
+    
+
+            const database = client.db(DATABASE_NAME);
+            const collection = database.collection(COLLECTION_NAME);
+    
+
+            const golfersData = await collection.find().toArray();
+    
+            golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+    
+            golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
+            response.render('percentageGraph', { golfers });
+        } catch (error) {
+            console.error('Error fetching golfers:', error);
+        } finally {
+            await client.close();
+        } 
+    } else {
+        golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
+        response.render('percentageGraph', { golfers });
+    }
+});
+
+app.get('/2019', async (request, response) => {
+    
+        response.render('2019');
+    }
+);
+
+app.get('/2020', async (request, response) => {
+    
+    response.render('2020');
+}
+);
+
+app.get('/2021', async (request, response) => {
+    
+    response.render('2021');
+}
+);
+
+app.get('/2022', async (request, response) => {
+    
+    response.render('2022');
+}
+);
+
+app.get('/2023', async (request, response) => {
+    
+    response.render('2023');
+}
+);
+
+app.get('/format', async (request, response) => {
+    
+    response.render('format');
+}
+);
+
+
+app.post('/sort-name', (request, response) => {
+
+    golfers.sort((a,b) => a.name.localeCompare(b.name));
+
+    response.render('playerList', { golfers });
+});
+
+app.post('/sort-cups', (request, response) => {
+
+    golfers.sort((a,b) => b.totalCups - a.totalCups );
+
+    response.render('playerList', { golfers });
+});
+
+app.post('/sort-winning', (request, response) => {
+
+    golfers.sort((a, b) => b.winningPercentage - a.winningPercentage);
+
+
+    response.render('playerList', { golfers });
+});
+
+
+
+app.listen(PORT, () => {
+
+    client = new MongoClient(DATABASE_URI);
+    database = client.db(DATABASE_NAME);
+    collection = database.collection(COLLECTION_NAME);
+
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
