@@ -200,6 +200,31 @@ app.get('/2019', async (request, response) => {
     }
 );
 
+app.get('/2020', async (request, response) => {
+    
+    response.render('2020');
+}
+);
+
+app.get('/2021', async (request, response) => {
+    
+    response.render('2021');
+}
+);
+
+app.get('/2022', async (request, response) => {
+    
+    response.render('2022');
+}
+);
+
+app.get('/2023', async (request, response) => {
+    
+    response.render('2023');
+}
+);
+
+
 app.post('/sort-name', (request, response) => {
 
     golfers.sort((a,b) => a.name.localeCompare(b.name));
