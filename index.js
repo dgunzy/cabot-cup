@@ -224,6 +224,12 @@ app.get('/2023', async (request, response) => {
 }
 );
 
+app.get('/format', async (request, response) => {
+    
+    response.render('format');
+}
+);
+
 
 app.post('/sort-name', (request, response) => {
 
