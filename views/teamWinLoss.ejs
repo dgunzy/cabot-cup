@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <canvas id="teamPerformanceChart" width="400" height="400"></canvas>
+    <canvas id="teamPerformanceChart" height="600" style="overflow: auto;"></canvas>
 
     <script>
         var golfersData = <%- JSON.stringify(golfers) %>;
@@ -27,35 +27,48 @@
         });
 
         var ctx = document.getElementById('teamPerformanceChart').getContext('2d');
+
+        function updateChart() {
+            var screenWidth = window.innerWidth;
+            return screenWidth <= 767 ? 'y' : 'x';
+        }
+
         var teamPerformanceChart = new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
                 labels: golferNames,
                 datasets: [
                     {
                         label: 'Team Wins',
                         data: teamWins,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1,
-                        fill: false
+                        backgroundColor: 'rgba(75, 192, 192, 1)'
                     },
                     {
                         label: 'Team Loss',
                         data: teamLoss,
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1,
-                        fill: false
+                        backgroundColor: 'rgba(255, 99, 132, 1)'
                     }
                 ]
             },
             options: {
+                indexAxis: updateChart(),
                 scales: {
                     y: {
                         beginAtZero: true
                     }
                 },
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Team Wins / Loss',
+                        padding: {
+                            top: 10,
+                            bottom: 10
+                        }
+                    }
+                }
             }
         });
     </script>

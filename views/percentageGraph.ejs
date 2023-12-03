@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <canvas id="teamPerformanceChart" width="400" height="400"></canvas>
+    <canvas id="teamPerformanceChart" height="600" style="overflow: auto;"></canvas>
 
     <script>
         var golfersData = <%- JSON.stringify(golfers) %>;
@@ -23,6 +23,13 @@
         });
 
         var ctx = document.getElementById('teamPerformanceChart').getContext('2d');
+
+
+        function updateChart() {
+            var screenWidth = window.innerWidth;
+            return screenWidth <= 767 ? 'y' : 'x';
+        }
+
         var teamPerformanceChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -38,13 +45,24 @@
                 ]
             },
             options: {
+                indexAxis: updateChart(),
                 scales: {
                     y: {
                         beginAtZero: true
                     }
                 },
                 responsive: true,
-                maintainAspectRatio: false
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Winning Percantage of Matches',
+                        padding: {
+                            top: 10,
+                            bottom: 10
+                        }
+                    }
+                }
             }
         });
     </script>
