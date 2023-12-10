@@ -1,0 +1,8 @@
+{
+    "name": "user_name",
+    "kindeId": "user_kinde_id",
+    "balance": 0,
+    "gradedBets": "graded_bets_data",
+    "transactionHistory": "transaction_history_data"
+  }
+  

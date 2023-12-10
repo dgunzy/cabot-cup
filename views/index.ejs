@@ -55,8 +55,26 @@ pie chart for matches -->
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" hx-get="/format"href="#" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Format</a>
-                </li>
+                    <a class="nav-link" hx-get="/format" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Format</a>
+                </li  >
+                
+                <% if (isAuthenticated && isMember) { %>
+                    <li class="nav-item">
+                        <a hx-get="/account" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a hx-get="/userBets" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bets</a>
+                    </li>
+                <% } %>
+            
+                <% if (isAuthenticated && isAdmin) { %>
+                    <li class="nav-item">
+                        <a hx-get="/createBets" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bet Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a hx-get="/manageUsers" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">User Dashboard</a>
+                    </li>
+                <% } %>
             </ul>
         </div>
     </nav>
@@ -97,5 +115,23 @@ pie chart for matches -->
             <figcaption>Teams of the 2022 Cup</figcaption>
         </figure>
     </div>
+
+    <footer class="footer mt-auto py-3 bg-dark">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <% if (!isAuthenticated) { %>
+                        <a href="/login" class="text-white">Sign In</a>
+                        | 
+                        <a href="/register" class="text-white">Sign Up</a>
+                    <% } else { %>
+                        <a href="/logout" class="text-white">Logout</a>
+                    <% } %>
+                </div>
+                <div class="col-md-6 text-md-right">
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

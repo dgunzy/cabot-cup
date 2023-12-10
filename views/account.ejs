@@ -1,0 +1,18 @@
+<div class="container mt-4">
+    <h2>Account Information</h2>
+    <div class="account-info">
+        <h4><%= user.name %></h4>
+        <p>Balance: <%= user.balance %></p>
+
+        <% if (user.transactionHistory && user.transactionHistory.length > 0) { %>
+            <h4>Transaction History</h4>
+            <ul>
+                <% user.transactionHistory.forEach(function(transaction) { %>
+                    <li><%= transaction %></li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No transaction history available.</p>
+        <% } %>
+    </div>
+</div>
