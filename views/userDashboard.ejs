@@ -1,0 +1,104 @@
+<%
+function convertToAmerican(decimalOdds) {
+    if (decimalOdds < 2) {
+        return Math.round((-100 / (decimalOdds - 1)));
+    } else {
+        return "+" + Math.round((decimalOdds - 1) * 100);
+    }
+}
+%>
+
+
+<div class="container mt-4"></div>
+<h2>User Control Dashboard</h2>
+<% user.forEach(function(currentUser) { %>
+    
+        
+        <div class="account-info">
+            
+            <h4><%= currentUser.name %></h4>
+        <p>Balance: <%= currentUser.balance %></p>
+        <form hx-post="/updateUserBalance" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+            <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
+            <input type="text" name="balance" placeholder="Enter value" required
+                oninput="this.value = this.value.replace(/[^0-9-]/g, '');"
+                pattern="-?[0-9]{1,5}"
+                title="Please enter a valid integer between -99999 and 99999">
+            <button type="submit">Adjust User Balance Manually</button>
+        </form>
+
+            <% if (currentUser.pendingBets && currentUser.pendingBets.length > 0) { %>
+                <h4>Pending Bets</h4>
+                <ul>
+                    <% currentUser.pendingBets.forEach(function(bet) { %>
+                        <li>
+                            <strong>Horse:</strong> <%= bet.key %>,
+                            <strong>Odds:</strong> <%= convertToAmerican(bet.odds) %>,
+                            <strong>Wager:</strong> <%= bet.wager %>,
+                            <strong>Bet Description:</strong> <%= bet.uniqueDescription %>,
+    
+                            <form hx-post="/approveUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                                <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
+                                <input type="hidden" name="horse" value="<%= bet.key %>">
+                                <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
+                                <button type="submit">Approve</button>
+                            </form>
+                        
+                            <form hx-post="/denyUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                                <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
+                                <input type="hidden" name="horse" value="<%= bet.key %>">
+                                <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
+                                <button type="submit">Deny</button>
+                            </form>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No pending bets available.</p>
+            <% } %>
+
+            <% if (currentUser.approvedBets && currentUser.approvedBets.length > 0) { %>
+                <h4>Approved Bets</h4>
+                <ul>
+                    <% currentUser.approvedBets.forEach(function(bet) { %>
+                        <li>
+                            <strong>Horse:</strong> <%= bet.key %>,
+                            <strong>Odds:</strong> <%= convertToAmerican(bet.odds) %>,
+                            <strong>Wager:</strong> <%= bet.wager %>,
+                            <strong>Bet Description:</strong> <%= bet.uniqueDescription %>,
+    
+                            <form hx-post="/winUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                                <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
+                                <input type="hidden" name="horse" value="<%= bet.key %>">
+                                <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
+                                <button type="submit">Win</button>
+                            </form>
+                        
+                            <form hx-post="/loseUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                                <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
+                                <input type="hidden" name="horse" value="<%= bet.key %>">
+                                <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
+                                <button type="submit">Lose</button>
+                            </form>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No approved bets available.</p>
+            <% } %>
+
+            <% if (currentUser.transactionHistory && currentUser.transactionHistory.length > 0) { %>
+                <h4>Transaction History</h4>
+                <ul>
+                    <% currentUser.transactionHistory.forEach(function(transaction) { %>
+                        <li><%= transaction %></li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No transaction history available.</p>
+            <% } %>
+
+            <input type="hidden" id="kindeId" value="<%= currentUser.kindeId %>">
+        </div>
+    </div>
+<% }); %>

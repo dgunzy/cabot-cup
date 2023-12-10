@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
+
 </head>
 <!-- To Do! 
 Fix main page side margin
@@ -63,16 +64,16 @@ pie chart for matches -->
                         <a hx-get="/account" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Account</a>
                     </li>
                     <li class="nav-item">
-                        <a hx-get="/userBets" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bets</a>
+                        <a hx-get="/betPage" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bets</a>
                     </li>
                 <% } %>
             
                 <% if (isAuthenticated && isAdmin) { %>
                     <li class="nav-item">
-                        <a hx-get="/createBets" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bet Dashboard</a>
+                        <a hx-get="/betDashboard" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bet Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a hx-get="/manageUsers" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">User Dashboard</a>
+                        <a hx-get="/userDashboard" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">User Dashboard</a>
                     </li>
                 <% } %>
             </ul>
