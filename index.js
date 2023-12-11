@@ -4,17 +4,44 @@ require('dotenv').config();
 const path = require('path');
 const { MongoClient } = require("mongodb");
 
+const bodyParser = require('body-parser');
+
+const axios = require('axios');
+const { getFromJavaApi, postToJavaApi } = require('./javaApi');
+
 const PORT = process.env.PORT || 3000;
 const DATABASE_URI = process.env.DATABASE_URI;
 const DATABASE_NAME = process.env.DATABASE_NAME;
 const COLLECTION_NAME = process.env.COLLECTION_NAME;
+
+const API_SECRET_KEY = process.env.API_SECRET_KEY;
+const JAVA_URL = process.env.JAVA_URL;
+//kinde auth part
+const {KindeClient, GrantType} = require("@kinde-oss/kinde-nodejs-sdk");
+
+const options = {
+	domain: process.env.KINDE_DOMAIN,
+	clientId: process.env.KINDE_CLIENT_ID,
+	clientSecret: process.env.KINDE_CLIENT_SECRET,
+	redirectUri: process.env.KINDE_REDIRECT_URI,
+	logoutRedirectUri: process.env.KINDE_LOGOUT_REDIRECT_URI,
+	grantType: GrantType.PKCE
+};
+
+const kindeClient = new KindeClient(options);
+//Kinde part end
 const fs = require('fs');
 
 const ejs = require('ejs');
+const { async } = require('@kinde-oss/kinde-nodejs-sdk/dist/KindeClient');
+const { time } = require('console');
 
 app.set('view engine', 'ejs');
 
 app.use(express.static('views'));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 class Golfer {
@@ -46,6 +73,7 @@ var golfers;
 
 var numGolfers;
 
+
 async function loadFromDatabase() {
     try {
 
@@ -72,6 +100,39 @@ function checkGolferCount() {
         loadFromDatabase();
     } 
 };
+
+
+app.get('/', async (request, response) => {
+
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        console.log(isAuthenticated);
+
+        if (isAuthenticated) {
+
+             userPermissions  = kindeClient.getPermissions(request);
+            const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
+
+            const hasAdminPermissions = userPermissions.permissions.includes('enable:admin');
+
+            if(hasMemberPermissions) {
+                isMember = true;
+            }
+            if(hasAdminPermissions) {
+                isAdmin = true;
+            }
+        }
+    response.render('index', { isAuthenticated , isMember, isAdmin });
+
+    } catch {
+    isMember = false; 
+    isAuthenticated = false;
+    isAdmin = false;
+    console.log("Error authenticating user")
+    response.render('index' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
 
 app.get('/listPlayers', async (request, response) => {
     checkGolferCount();
@@ -164,8 +225,6 @@ app.post('/sort-winning', (request, response) => {
     response.render('playerList', { golfers });
 });
 
-
-
 app.listen(PORT, () => {
 
     client = new MongoClient(DATABASE_URI);
@@ -174,5 +233,409 @@ app.listen(PORT, () => {
     loadFromDatabase();
 
     console.log(`Server is running on http://localhost:${PORT}`);
-  });
+});
+
+
+// Kinde auth part of project
+
+  app.get("/login", kindeClient.login(), (req, res) => {
+	return res.redirect("/");
+});
+
+app.get("/register", kindeClient.register(), (req, res) => {
+	return res.redirect("/");
+});
+
+app.get("/callback", kindeClient.callback(), (req, res) => {
+	return res.redirect("/");
+});
+
+
+app.get("/logout", kindeClient.logout());
+
+app.get('/account', async (request, response) => {
+
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
+
+        if (hasMemberPermissions && isAuthenticated) {
+            //Connect to Java api here
+            console.log("Auth successful")
+            const apiData = await postToJavaApi( JAVA_URL + '/checkuser', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            response.render('account', { user: apiData});
+        } else {
+            response.status(403);
+            return response.send("forbidden")
+        }
+    } catch {
+        isMember = false; 
+        isAuthenticated = false;
+        isAdmin = false;
+        console.log("Error authenticating user")
+        response.render('error' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
+
+app.get('/betPage', async (request, response) => {
+
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
+
+        if (hasMemberPermissions && isAuthenticated) {
+
+            const apiData = await postToJavaApi(JAVA_URL +'/getbets', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            
+            response.render('betPage', { bets: apiData});
+        } else {
+            response.status(403);
+            return response.send("forbidden")
+        }
+    } catch {
+        isMember = false; 
+        isAuthenticated = false;
+        isAdmin = false;
+        console.log("Error authenticating user")
+        response.render('error' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
+
+app.post('/userWager', async (request, response) => {
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/addbettouserpending/${request.body.horse}/${request.body.name}/${request.body.wager}/${request.body.odds}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betPage', { bets: apiData });
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/deleteBet', async (request, response) => {
+
+    try {
+        const userId = kindeClient.getUserDetails(request).id;
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/denypendingbet/${request.body.uniqueDescription}/${request.body.horse}/${userId}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
+
+        if (hasMemberPermissions && isAuthenticated) {
+
+            const apiData = await postToJavaApi( JAVA_URL + '/checkuser', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            response.render('account', { user: apiData});
+        } else {
+            response.status(403);
+            return response.send("forbidden")
+        }
+    } catch {
+        isMember = false; 
+        isAuthenticated = false;
+        isAdmin = false;
+        console.log("Error authenticating user")
+        response.render('error' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
+
+
+app.get('/userDashboard', async (request, response) => {
+
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        const hasAdminPermissions = userPermissions.permissions.includes('enable:admin');
+
+
+        if (isAuthenticated && hasAdminPermissions) {
+            try {
+                const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+                console.log(apiData);
+                
+                response.render('userDashboard', { user: apiData });
+
+            } catch {
+                console.log("Error connecting to java api");
+            }
+
+        } else {
+            response.status(403);
+            return response.send("forbidden")
+        }
+    } catch {
+        isMember = false; 
+        isAuthenticated = false;
+        isAdmin = false;
+        console.log("Error authenticating user")
+        response.render('index' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
+
+
+app.post('/approveUserBet', async (request, response) => {
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/addbettouserapproved/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+        console.log(apiData);
+        
+        response.render('userDashboard', { user: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/denyUserBet', async (request, response) => {
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/denypendingbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+        console.log(apiData);
+        
+        response.render('userDashboard', { user: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/winUserBet', async (request, response) => {
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/winapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+        
+        response.render('userDashboard', { user: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/loseUserBet', async (request, response) => {
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/loseapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+        console.log(apiData);
+        
+        response.render('userDashboard', { user: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/updateUserBalance', async (request, response) => {
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/updatebalance/${request.body.balance}/${request.body.kindeId}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+        
+        response.render('userDashboard', { user: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+
+app.get('/betDashboard', async (request, response) => {
+
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
+
+        if (hasMemberPermissions && isAuthenticated) {
+
+            const apiData = await postToJavaApi(JAVA_URL +'/getbets', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            
+            response.render('betDashboard', { bets: apiData});
+        } else {
+            response.status(403);
+            return response.send("forbidden");
+        }
+    } catch {
+        isMember = false; 
+        isAuthenticated = false;
+        isAdmin = false;
+        console.log("Error authenticating user")
+        response.render('error' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
+
+app.post('/createNewBet', async (request, response) => {
+
+    
+    if (Array.isArray(request.body.horse)) {
+      
+    } else if (typeof request.body.horse === 'string') {
+        request.body.horse = [request.body.horse];
+        request.body.odds = [request.body.odds]
+    }
+    
+    try {
+
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/addbet`,
+            request.body,
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betDashboard', { bets: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/updateBetOdds', async (request, response) => {
+
+    console.log(request.body);
+
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/changebet/${request.body.name}/${request.body.horse}/${request.body.newOdds}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betDashboard', { bets: apiData });
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+app.post('/deleteBetFromBets', async (request, response) => {
+    console.log(request.body);
+    console.log(request.body.name);
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/deletebet/${request.body.name}`,
+            null,
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betDashboard', { bets: apiData });
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
 

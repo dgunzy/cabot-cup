@@ -1,0 +1,72 @@
+<div class="container mt-4">
+    
+    <h2>Create a New Bet</h2>
+  
+    <form hx-post="/createNewBet" hx-trigger="submit" hx-target="#contentContainer" hx-indicator="#spinner">
+      <label for="betName">Bet Name:</label>
+      <input type="text" id="betName" name="name" placeholder="Enter bet name" required>
+  
+      <div id="betOddsContainer">
+      </div>
+  
+      <button type="button" onclick="addBetOddsField()">Add Bet Odds</button>
+  
+      <button type="submit">Create Bet</button>
+    </form>
+
+    <h2>Modify an Existing Bet</h2>
+
+    <div class="bets-info">
+        <% bets.forEach(function(bet) { %>
+            <div class="bet-info">
+                <h4><%= bet.name %></h4>
+                <form hx-post="/deleteBetFromBets" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                    <input type="hidden" name="name" value="<%= bet.name %>">
+                    <button>Delete</button>
+                </form>
+                
+                <ul>
+                    <% bet.betOdds.forEach(function(odds) { %>
+                        <li>
+                            <strong>Horse:</strong> <%= odds.horse %>,
+                            <strong>Odds:</strong> <%= odds.odds %>
+                            <form hx-post="/updateBetOdds" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                                <input type="hidden" name="name" value="<%= bet.name %>">
+                                <input type="hidden" name="horse" value="<%= odds.horse %>">
+                                <input type="text" name="newOdds" placeholder="Enter value" required
+                                oninput="this.value = this.value.replace(/[^0-9-]/g, '');"
+                                pattern="-?[0-9]{1,5}"
+                                title="Please enter a valid integer between -99999 and 99999">
+                                <button hx-post="/changeOdds" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Change Odds</button>
+                            </form>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        <% }); %>
+    
+        <% if (!bets || bets.length === 0) { %>
+            <p>No bets available.</p>
+        <% } %>
+    </div>
+    
+  
+  </div>
+  
+  <script>
+    function addBetOddsField() {
+      const container = document.getElementById('betOddsContainer');
+      const newDiv = document.createElement('div');
+  
+      newDiv.innerHTML = `
+        <label for="horse">Horse:</label>
+        <input type="text" id="horse" name="horse" placeholder="Enter horse name" required>
+  
+        <label for="odds">Odds:</label>
+        <input type="number" id="odds" name="odds" step="0.01" placeholder="Enter odds" required>
+      `;
+  
+      container.appendChild(newDiv);
+    }
+  </script>
+  

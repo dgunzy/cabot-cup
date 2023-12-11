@@ -1,0 +1,32 @@
+<div class="container mt-4">
+    <h2>Current Available Bets</h2>
+    <div class="bets-info">
+        <% bets.forEach(function(bet) { %>
+            <h4><%= bet.name %></h4>
+            <ul>
+                <% bet.betOdds.forEach(function(odds) { %>
+                    <li>
+                        <strong>Horse:</strong> <%= odds.horse %>,
+                        <strong>Odds:</strong> <%= odds.odds %>
+                        
+                        <form hx-post="/userWager" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                            <input type="hidden" name="name" value="<%= bet.name %>">
+                            <input type="hidden" name="horse" value="<%= odds.horse %>">
+                            <input type="hidden" name="odds" value="<%= odds.odds %>">
+                            <input type="text" name="wager" placeholder="Enter value" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                pattern="[1-9][0-9]{0,3}|10000"
+                                title="Please enter a valid integer between 1 and 10000">
+                            <button type="submit">Place Wager</button>
+                        </form>
+                    </li>
+                <% }); %>
+            </ul>
+        <% }); %>
+
+        <% if (!bets || bets.length === 0) { %>
+            <p>No bets available.</p>
+        <% } %>
+    </div>
+</div>
+
