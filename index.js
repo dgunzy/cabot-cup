@@ -532,6 +532,7 @@ app.get('/betDashboard', async (request, response) => {
         if (hasMemberPermissions && isAuthenticated) {
 
             const apiData = await postToJavaApi(JAVA_URL +'/getbets', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            
             response.render('betDashboard', { bets: apiData});
         } else {
             response.status(403);
@@ -547,15 +548,20 @@ app.get('/betDashboard', async (request, response) => {
 });
 
 app.post('/createNewBet', async (request, response) => {
-    const newBet = request.body;
-    console.log(newBet);
-    const formattedBet = convertToNewFormat(newBet);
+
+    
+    if (Array.isArray(request.body.horse)) {
+      
+    } else if (typeof request.body.horse === 'string') {
+        request.body.horse = [request.body.horse];
+        request.body.odds = [request.body.odds]
+    }
+    
     try {
-        console.log(formattedBet);
-        console.log('Response Data:', JSON.stringify(formattedBet, null, 2));
+
         const betResponse = await postToJavaApi(
             `${JAVA_URL}/addbet`,
-            formattedBet,
+            request.body,
             API_SECRET_KEY
         );
         console.log(betResponse);
@@ -565,37 +571,71 @@ app.post('/createNewBet', async (request, response) => {
     }
     
     try {
-        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
-        console.log(apiData);
-        
-        response.render('userDashboard', { user: apiData });
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betDashboard', { bets: apiData });
 
     } catch {
         console.log("Error connecting to java api");
     }
 });
 
-function convertToNewFormat(jsonData) {
-    const name = jsonData.name;
-    const betOdds = [];
+app.post('/updateBetOdds', async (request, response) => {
 
-    const horseKeys = Object.keys(jsonData).filter(key => key.startsWith('horse'));
-    const oddsKeys = Object.keys(jsonData).filter(key => key.startsWith('odds'));
+    console.log(request.body);
 
-
-    const maxLength = Math.max(horseKeys.length, oddsKeys.length);
-
-    for (let i = 0; i < maxLength; i++) {
-        const horseKey = horseKeys[i];
-        const oddsKey = oddsKeys[i];
-
-        if (jsonData[horseKey] && jsonData[oddsKey]) {
-            const horse = jsonData[horseKey];
-            const odds = parseFloat(jsonData[oddsKey]);
-
-            betOdds.push({ horse, odds });
-        }
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/changebet/${request.body.name}/${request.body.horse}/${request.body.newOdds}`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
     }
+    
+    try {
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betDashboard', { bets: apiData });
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
 
-    return { name, betOdds };
-}
+app.post('/deleteBetFromBets', async (request, response) => {
+    console.log(request.body);
+    console.log(request.body.name);
+    try {
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/deletebet/${request.body.name}`,
+            null,
+            API_SECRET_KEY
+        );
+        console.log(betResponse);
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await postToJavaApi(
+            `${JAVA_URL}/getbets`,
+            kindeClient.getUserDetails(request),
+            API_SECRET_KEY
+        );
+        response.render('betDashboard', { bets: apiData });
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+

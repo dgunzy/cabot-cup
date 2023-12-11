@@ -1,12 +1,3 @@
-<%
-function convertToAmerican(decimalOdds) {
-    if (decimalOdds < 2) {
-        return Math.round((-100 / (decimalOdds - 1)));
-    } else {
-        return "+" + Math.round((decimalOdds - 1) * 100);
-    }
-}
-%>
 
 
 <div class="container mt-4"></div>
@@ -33,7 +24,7 @@ function convertToAmerican(decimalOdds) {
                     <% currentUser.pendingBets.forEach(function(bet) { %>
                         <li>
                             <strong>Horse:</strong> <%= bet.key %>,
-                            <strong>Odds:</strong> <%= convertToAmerican(bet.odds) %>,
+                            <strong>Odds:</strong> <%= bet.odds %>,
                             <strong>Wager:</strong> <%= bet.wager %>,
                             <strong>Bet Description:</strong> <%= bet.uniqueDescription %>,
     
@@ -63,7 +54,7 @@ function convertToAmerican(decimalOdds) {
                     <% currentUser.approvedBets.forEach(function(bet) { %>
                         <li>
                             <strong>Horse:</strong> <%= bet.key %>,
-                            <strong>Odds:</strong> <%= convertToAmerican(bet.odds) %>,
+                            <strong>Odds:</strong> <%= bet.odds %>,
                             <strong>Wager:</strong> <%= bet.wager %>,
                             <strong>Bet Description:</strong> <%= bet.uniqueDescription %>,
     
