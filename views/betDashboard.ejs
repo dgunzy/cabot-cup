@@ -1,0 +1,34 @@
+<div class="container mt-4">
+    <h2>Create a New Bet</h2>
+  
+    <form hx-post="/createNewBet" hx-trigger="submit" hx-target="#contentContainer" hx-indicator="#spinner">
+      <label for="betName">Bet Name:</label>
+      <input type="text" id="betName" name="name" placeholder="Enter bet name" required>
+  
+      <div id="betOddsContainer">
+      </div>
+  
+      <button type="button" onclick="addBetOddsField()">Add Bet Odds</button>
+  
+      <button type="submit">Create Bet</button>
+    </form>
+  
+  </div>
+  
+  <script>
+    function addBetOddsField() {
+      const container = document.getElementById('betOddsContainer');
+      const newDiv = document.createElement('div');
+  
+      newDiv.innerHTML = `
+        <label for="horse">Horse:</label>
+        <input type="text" id="horse" name="horse" placeholder="Enter horse name" required>
+  
+        <label for="odds">Odds:</label>
+        <input type="number" id="odds" name="odds" step="0.01" placeholder="Enter odds" required>
+      `;
+  
+      container.appendChild(newDiv);
+    }
+  </script>
+  

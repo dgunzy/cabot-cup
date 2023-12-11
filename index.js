@@ -288,6 +288,7 @@ app.get('/betPage', async (request, response) => {
         if (hasMemberPermissions && isAuthenticated) {
 
             const apiData = await postToJavaApi(JAVA_URL +'/getbets', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            
             response.render('betPage', { bets: apiData});
         } else {
             response.status(403);
@@ -457,7 +458,6 @@ app.post('/winUserBet', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -465,7 +465,6 @@ app.post('/winUserBet', async (request, response) => {
     
     try {
         const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
-        console.log(apiData);
         
         response.render('userDashboard', { user: apiData });
 
@@ -507,6 +506,58 @@ app.post('/updateUserBalance', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
+    } catch {
+        console.log("Error sending bet");
+        response.render('error');
+    }
+    
+    try {
+        const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
+        
+        response.render('userDashboard', { user: apiData });
+
+    } catch {
+        console.log("Error connecting to java api");
+    }
+});
+
+
+app.get('/betDashboard', async (request, response) => {
+
+    try {
+
+        const isAuthenticated = await kindeClient.isAuthenticated(request);
+        const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
+
+        if (hasMemberPermissions && isAuthenticated) {
+
+            const apiData = await postToJavaApi(JAVA_URL +'/getbets', kindeClient.getUserDetails(request), API_SECRET_KEY);
+            response.render('betDashboard', { bets: apiData});
+        } else {
+            response.status(403);
+            return response.send("forbidden");
+        }
+    } catch {
+        isMember = false; 
+        isAuthenticated = false;
+        isAdmin = false;
+        console.log("Error authenticating user")
+        response.render('error' , { isAuthenticated,  isMember, isAdmin } );
+    }
+});
+
+app.post('/createNewBet', async (request, response) => {
+    const newBet = request.body;
+    console.log(newBet);
+    const formattedBet = convertToNewFormat(newBet);
+    try {
+        console.log(formattedBet);
+        console.log('Response Data:', JSON.stringify(formattedBet, null, 2));
+        const betResponse = await postToJavaApi(
+            `${JAVA_URL}/addbet`,
+            formattedBet,
+            API_SECRET_KEY
+        );
         console.log(betResponse);
     } catch {
         console.log("Error sending bet");
@@ -524,38 +575,27 @@ app.post('/updateUserBalance', async (request, response) => {
     }
 });
 
-app.get('/betDashboard', async (request, response) => {
+function convertToNewFormat(jsonData) {
+    const name = jsonData.name;
+    const betOdds = [];
 
-    try {
+    const horseKeys = Object.keys(jsonData).filter(key => key.startsWith('horse'));
+    const oddsKeys = Object.keys(jsonData).filter(key => key.startsWith('odds'));
 
-        const isAuthenticated = await kindeClient.isAuthenticated(request);
-        const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
 
-        if (hasMemberPermissions && isAuthenticated) {
+    const maxLength = Math.max(horseKeys.length, oddsKeys.length);
 
-            const apiData = await postToJavaApi(JAVA_URL +'/getbets', kindeClient.getUserDetails(request), API_SECRET_KEY);
-            response.render('betPage', { bets: apiData});
-        } else {
-            response.status(403);
-            return response.send("forbidden")
+    for (let i = 0; i < maxLength; i++) {
+        const horseKey = horseKeys[i];
+        const oddsKey = oddsKeys[i];
+
+        if (jsonData[horseKey] && jsonData[oddsKey]) {
+            const horse = jsonData[horseKey];
+            const odds = parseFloat(jsonData[oddsKey]);
+
+            betOdds.push({ horse, odds });
         }
-    } catch {
-        isMember = false; 
-        isAuthenticated = false;
-        isAdmin = false;
-        console.log("Error authenticating user")
-        response.render('error' , { isAuthenticated,  isMember, isAdmin } );
     }
-});
 
-function convertToAmerican(decimalOdds) {
-    if (decimalOdds < 2) {
-        return Math.round((-100 / (decimalOdds - 1)));
-    } else {
-        return Math.round((decimalOdds - 1) * 100);
-    }
+    return { name, betOdds };
 }
-
-module.exports = {
-    convertToAmerican: convertToAmerican,
-};
