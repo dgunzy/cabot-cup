@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 const path = require('path');
-//const { MongoClient } = require("mongodb");
+const { MongoClient } = require("mongodb");
 
 const bodyParser = require('body-parser');
 
@@ -75,23 +75,23 @@ var numGolfers;
 
 
 async function loadFromDatabase() {
-    // try {
+    try {
 
-    //     await client.connect();
+        await client.connect();
 
-    //     const database = client.db(DATABASE_NAME);
-    //     const collection = database.collection(COLLECTION_NAME);
+        const database = client.db(DATABASE_NAME);
+        const collection = database.collection(COLLECTION_NAME);
 
-    //     const golfersData = await collection.find().toArray();
+        const golfersData = await collection.find().toArray();
 
-    //     golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
+        golfers = golfersData.map(data => new Golfer(data._id, data.name, data.imageSrc, data.teamWins, data.teamLoss, data.singlesWins, data.singlesLoss, data.singlesTie, data.doublesWins, data.doublesLoss, data.doublesTie));
 
-    // } catch (error) {
-    //     console.error('Error fetching golfers:', error);
-    // } finally {
-    //     await client.close();
-    // }
-    // numGolfers = golfers.length;
+    } catch (error) {
+        console.error('Error fetching golfers:', error);
+    } finally {
+        await client.close();
+    }
+    numGolfers = golfers.length;
 }
 
 function checkGolferCount() {
@@ -227,9 +227,9 @@ app.post('/sort-winning', (request, response) => {
 
 app.listen(PORT, () => {
 
-    // client = new MongoClient(DATABASE_URI);
-    // database = client.db(DATABASE_NAME);
-    // collection = database.collection(COLLECTION_NAME);
+    client = new MongoClient(DATABASE_URI);
+    database = client.db(DATABASE_NAME);
+    collection = database.collection(COLLECTION_NAME);
     loadFromDatabase();
 
     console.log(`Server is running on http://localhost:${PORT}`);
