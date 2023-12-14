@@ -311,7 +311,7 @@ app.post('/userWager', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-
+        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -339,7 +339,7 @@ app.post('/deleteBet', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-
+        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -408,10 +408,11 @@ app.post('/approveUserBet', async (request, response) => {
 
             `${JAVA_URL}/addbettouserapproved/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
 
-
+       
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
+        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -571,7 +572,7 @@ app.post('/createNewBet', async (request, response) => {
             request.body,
             API_SECRET_KEY
         );
-
+        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -599,7 +600,7 @@ app.post('/updateBetOdds', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-
+        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -625,7 +626,7 @@ app.post('/deleteBetFromBets', async (request, response) => {
             null,
             API_SECRET_KEY
         );
-
+        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
