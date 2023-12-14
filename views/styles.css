@@ -39,3 +39,8 @@
     max-width: 100%;
     height: auto;
 }
+.bet-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
