@@ -304,7 +304,6 @@ app.get('/betPage', async (request, response) => {
 });
 
 app.post('/userWager', async (request, response) => {
-
     try {
         const betResponse = await postToJavaApi(
             `${JAVA_URL}/addbettouserpending/${request.body.horse}/${request.body.name}/${request.body.wager}/${request.body.odds}`,
