@@ -335,7 +335,7 @@ app.post('/deleteBet', async (request, response) => {
         const userId = kindeClient.getUserDetails(request).id;
         const betResponse = await postToJavaApi(
 
-            `${JAVA_URL}/denypendingbet/${request.body.uniqueDescription}/${request.body.horse}/${userId}`,
+            `${JAVA_URL}/denypendingbet/${request.body.uniqueDescription}/${request.body.horse}/${userId}/${request.body.wager}`,
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
@@ -406,7 +406,7 @@ app.post('/approveUserBet', async (request, response) => {
     try {
         const betResponse = await postToJavaApi(
 
-            `${JAVA_URL}/addbettouserapproved/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            `${JAVA_URL}/addbettouserapproved/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
 
        
             kindeClient.getUserDetails(request),
@@ -434,7 +434,7 @@ app.post('/denyUserBet', async (request, response) => {
     try {
         const betResponse = await postToJavaApi(
 
-            `${JAVA_URL}/denypendingbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            `${JAVA_URL}/denypendingbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
 
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
@@ -460,7 +460,7 @@ app.post('/winUserBet', async (request, response) => {
     try {
         const betResponse = await postToJavaApi(
 
-            `${JAVA_URL}/winapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            `${JAVA_URL}/winapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
 
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
@@ -485,7 +485,7 @@ app.post('/loseUserBet', async (request, response) => {
     try {
         const betResponse = await postToJavaApi(
 
-            `${JAVA_URL}/loseapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+            `${JAVA_URL}/loseapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
