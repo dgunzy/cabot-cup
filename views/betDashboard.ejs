@@ -29,26 +29,25 @@
 
                 </form>
                 
-                <ul class="list-group" >
+                <ul class="list-group">
                     <% bet.betOdds.forEach(function(odds) { %>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <strong>Horse:</strong> <%= odds.horse %>,
                             <strong>Odds:</strong> <%= odds.odds %>
                             <form hx-post="/updateBetOdds" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
-                                <input type="hidden" name="name" value="<%= bet.name %>">
-                                <input type="hidden" name="horse" value="<%= odds.horse %>">
+                                <input type="hidden" name="name" value="<%= encodeURIComponent(bet.name) %>">
+                                <input type="hidden" name="horse" value="<%= encodeURIComponent(odds.horse) %>">
                                 <input type="text" name="newOdds" placeholder="Enter value" required
-                                oninput="this.value = this.value.replace(/[^0-9-]/g, '');"
-                                pattern="-?[0-9]{1,5}"
-                                title="Please enter a valid integer between -99999 and 99999">
-
+                                    oninput="this.value = this.value.replace(/[^0-9-]/g, '');"
+                                    pattern="-?[0-9]{1,5}"
+                                    title="Please enter a valid integer between -99999 and 99999">
                                 <button class="btn btn-primary" hx-post="/changeOdds" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Change Odds</button>
-
                             </form>
                             <span class="badge bg-primary rounded-pill"></span>
                         </li>
                     <% }); %>
                 </ul>
+                
             </div>
         <% }); %>
     
