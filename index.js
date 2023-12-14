@@ -412,7 +412,6 @@ app.post('/approveUserBet', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -439,7 +438,6 @@ app.post('/denyUserBet', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
     } catch {
         console.log("Error sending bet");
         response.render('error');

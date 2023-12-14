@@ -5,37 +5,37 @@
     <br>
     <br>
         
-        <div class="account-info">
+        <div class="text-center" class="account-info">
             
             <h4 class="text-center"><%= currentUser.name %></h4>
         <p class="text-center">Balance: <%= currentUser.balance %></p>
 
-        <form hx-post="/updateUserBalance" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+        <form class="text-center" hx-post="/updateUserBalance" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
             <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
-            <input type="text" name="balance" placeholder="Enter value" required
+            <input class="text-center" type="text" name="balance" placeholder="Enter value" required
                 oninput="this.value = this.value.replace(/[^0-9-]/g, '');"
                 pattern="-?[0-9]{1,5}"
                 title="Please enter a valid integer between -99999 and 99999">
 
-            <button type="submit" class="btn btn-primary">Adjust User Balance Manually</button>
+            <button  type="submit" class="btn btn-primary text-center">Adjust User Balance Manually</button>
 
-        </form>
+        </form class="text-center">
 
             <% if (currentUser.pendingBets && currentUser.pendingBets.length > 0) { %>
                 <h4>Pending Bets</h4>
-                <ul>
+                <ul class="list-group">
                     <% currentUser.pendingBets.forEach(function(bet) { %>
-                        <li>
-                            <strong>Horse:</strong> <%= bet.key %>,
-                            <strong>Odds:</strong> <%= bet.odds %>,
-                            <strong>Wager:</strong> <%= bet.wager %>,
-                            <strong>Bet Description:</strong> <%= bet.uniqueDescription %>,
+                        <li class="list-group-item d-flex justify-content-between align-items-center" >
+                            <p><strong>Horse:</strong> <%= bet.key %></p>
+                            <p><strong>Odds:</strong> <%= bet.odds %></p>
+                            <p><strong>Wager:</strong> <%= bet.wager %></p>
+                            <p><strong>Bet Description:</strong> <%= bet.uniqueDescription %>
     
-                            <form hx-post="/approveUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
+                            <form class="text-center" hx-post="/approveUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
                                 <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
                                 <input type="hidden" name="horse" value="<%= bet.key %>">
                                 <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
-
+                                <input type="hidden" name="wager" value="<%= bet.wager %>">
                                 <button type="submit" class="btn btn-success">Approve</button>
 
                             </form>
@@ -44,10 +44,10 @@
                                 <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
                                 <input type="hidden" name="horse" value="<%= bet.key %>">
                                 <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
-
-                                <button type="submit" class="btn btn-danger" >Deny</button>
+                                <input type="hidden" name="wager" value="<%= bet.wager %>">                                <button type="submit" class="btn btn-danger" >Deny</button>
 
                             </form>
+                            <span class="badge bg-primary rounded-pill"></span>
                         </li>
                     <% }); %>
                 </ul>
@@ -57,30 +57,31 @@
 
             <% if (currentUser.approvedBets && currentUser.approvedBets.length > 0) { %>
                 <h4>Approved Bets</h4>
-                <ul>
+                <ul class="list-group">
                     <% currentUser.approvedBets.forEach(function(bet) { %>
 
-                        <li class="row">
-                            <div class="col-md-4">
-                              <strong>Horse:</strong> <%= bet.key %>,
-                              <strong>Odds:</strong> <%= bet.odds %>,
-                              <strong>Wager:</strong> <%= bet.wager %>,
-                              <strong>Bet Description:</strong> <%= bet.uniqueDescription %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            
+                    
+                              <p><strong>Horse:</strong> <%= bet.key %></p>
+                              <p><strong>Odds:</strong> <%= bet.odds %></p>
+                              <p><strong>Wager:</strong> <%= bet.wager %></p>
+                              <p><strong>Bet Description:</strong> <%= bet.uniqueDescription %>
                       
                               <form hx-post="/winUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
                                 <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
                                 <input type="hidden" name="horse" value="<%= bet.key %>">
                                 <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
-                                <button type="submit" class="btn btn-success">Win</button>
+                                <input type="hidden" name="wager" value="<%= bet.wager %>">                                <button type="submit" class="btn btn-success">Win</button>
                               </form>
                   
                               <form hx-post="/loseUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
                                 <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
                                 <input type="hidden" name="horse" value="<%= bet.key %>">
                                 <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
-                                <button type="submit" class="btn btn-danger">Lose</button>
+                                <input type="hidden" name="wager" value="<%= bet.wager %>">                                <button type="submit" class="btn btn-danger">Lose</button>
                               </form>
-                            </div>
+                              <span class="badge bg-primary rounded-pill"></span>
                           </li>
                           
 
@@ -92,11 +93,13 @@
 
             <% if (currentUser.transactionHistory && currentUser.transactionHistory.length > 0) { %>
                 <h4>Transaction History</h4>
-                <ul>
+                <ul class="list-group">
 
                     <% currentUser.transactionHistory.reverse().forEach(function(transaction) { %>
 
-                        <li><%= transaction %></li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center"><%= transaction %>
+                            <span class="badge bg-primary rounded-pill"></span>
+                        </li>
                     <% }); %>
                 </ul>
             <% } else { %>
