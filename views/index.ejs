@@ -112,22 +112,24 @@
         </figure>
     </div>
 
-    <footer class="footer mt-auto py-3 bg-dark">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <% if (!isAuthenticated) { %>
-                        <a href="/login" class="text-white">Sign In</a>
-                        | 
-                        <a href="/register" class="text-white">Sign Up</a>
-                    <% } else { %>
-                        <a href="/logout" class="text-white">Logout</a>
-                    <% } %>
-                </div>
-                <div class="col-md-6 text-md-right">
-                </div>
+    
+
+<footer class="footer mt-auto">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <% if (!isAuthenticated) { %>
+                    <a href="/login" class="text-white">Sign In</a>
+                    | 
+                    <a href="/register" class="text-white">Sign Up</a>
+                <% } else { %>
+                    <a href="/logout" class="text-white">Logout</a>
+                <% } %>
+            </div>
+            <div class="col-md-6 text-md-right">
             </div>
         </div>
-    </footer>
+    </div>
+</footer>
 </body>
 </html>
