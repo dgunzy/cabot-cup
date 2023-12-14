@@ -44,3 +44,18 @@
     justify-content: center;
     align-items: center;
 }
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.footer {
+    background-color: #343a40; 
+    color: #fff; 
+    padding: 15px 0;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+}
