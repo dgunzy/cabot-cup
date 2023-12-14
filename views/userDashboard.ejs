@@ -1,5 +1,3 @@
-
-
 <div class="container  col-md-6 mx-auto">
 <h2 class="text-center">User Control Dashboard</h2>
 
@@ -11,13 +9,16 @@
             
             <h4 class="text-center"><%= currentUser.name %></h4>
         <p class="text-center">Balance: <%= currentUser.balance %></p>
+
         <form hx-post="/updateUserBalance" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
             <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
             <input type="text" name="balance" placeholder="Enter value" required
                 oninput="this.value = this.value.replace(/[^0-9-]/g, '');"
                 pattern="-?[0-9]{1,5}"
                 title="Please enter a valid integer between -99999 and 99999">
+
             <button type="submit" class="btn btn-primary">Adjust User Balance Manually</button>
+
         </form>
 
             <% if (currentUser.pendingBets && currentUser.pendingBets.length > 0) { %>
@@ -34,14 +35,18 @@
                                 <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
                                 <input type="hidden" name="horse" value="<%= bet.key %>">
                                 <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
+
                                 <button type="submit" class="btn btn-success">Approve</button>
+
                             </form>
                         
                             <form hx-post="/denyUserBet" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">
                                 <input type="hidden" name="kindeId" value="<%= currentUser.kindeId %>">
                                 <input type="hidden" name="horse" value="<%= bet.key %>">
                                 <input type="hidden" name="description" value="<%= bet.uniqueDescription %>">
+
                                 <button type="submit" class="btn btn-danger" >Deny</button>
+
                             </form>
                         </li>
                     <% }); %>
@@ -54,6 +59,7 @@
                 <h4>Approved Bets</h4>
                 <ul>
                     <% currentUser.approvedBets.forEach(function(bet) { %>
+
                         <li class="row">
                             <div class="col-md-4">
                               <strong>Horse:</strong> <%= bet.key %>,
@@ -77,6 +83,7 @@
                             </div>
                           </li>
                           
+
                     <% }); %>
                 </ul>
             <% } else { %>
@@ -86,7 +93,9 @@
             <% if (currentUser.transactionHistory && currentUser.transactionHistory.length > 0) { %>
                 <h4>Transaction History</h4>
                 <ul>
+
                     <% currentUser.transactionHistory.reverse().forEach(function(transaction) { %>
+
                         <li><%= transaction %></li>
                     <% }); %>
                 </ul>
@@ -97,5 +106,7 @@
             <input type="hidden" id="kindeId" value="<%= currentUser.kindeId %>">
         </div>
     </div>
+
 </div>
+
 <% }); %>
