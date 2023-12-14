@@ -107,7 +107,7 @@ app.get('/', async (request, response) => {
     try {
 
         const isAuthenticated = await kindeClient.isAuthenticated(request);
-        console.log(isAuthenticated);
+
 
         if (isAuthenticated) {
 
@@ -261,8 +261,8 @@ app.get('/account', async (request, response) => {
         const hasMemberPermissions = userPermissions.permissions.includes('enable:member');
 
         if (hasMemberPermissions && isAuthenticated) {
-            //Connect to Java api here
-            console.log("Auth successful")
+
+
             const apiData = await postToJavaApi( JAVA_URL + '/checkuser', kindeClient.getUserDetails(request), API_SECRET_KEY);
             response.render('account', { user: apiData});
         } else {
@@ -311,7 +311,7 @@ app.post('/userWager', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
+
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -334,11 +334,12 @@ app.post('/deleteBet', async (request, response) => {
     try {
         const userId = kindeClient.getUserDetails(request).id;
         const betResponse = await postToJavaApi(
-            `${JAVA_URL}/denypendingbet/${request.body.uniqueDescription}/${request.body.horse}/${userId}`,
+
+            `${JAVA_URL}/denypendingbet/${request.body.uniqueDescription}/${request.body.horse}/${userId}/${request.body.wager}`,
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
+
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -378,7 +379,7 @@ app.get('/userDashboard', async (request, response) => {
         if (isAuthenticated && hasAdminPermissions) {
             try {
                 const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
-                console.log(apiData);
+
                 
                 response.render('userDashboard', { user: apiData });
 
@@ -404,7 +405,10 @@ app.post('/approveUserBet', async (request, response) => {
 
     try {
         const betResponse = await postToJavaApi(
-            `${JAVA_URL}/addbettouserapproved/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+
+            `${JAVA_URL}/addbettouserapproved/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
+
+
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
@@ -429,7 +433,9 @@ app.post('/denyUserBet', async (request, response) => {
 
     try {
         const betResponse = await postToJavaApi(
-            `${JAVA_URL}/denypendingbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+
+            `${JAVA_URL}/denypendingbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
+
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
@@ -454,7 +460,9 @@ app.post('/winUserBet', async (request, response) => {
 
     try {
         const betResponse = await postToJavaApi(
-            `${JAVA_URL}/winapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+
+            `${JAVA_URL}/winapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
+
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
@@ -477,11 +485,12 @@ app.post('/loseUserBet', async (request, response) => {
 
     try {
         const betResponse = await postToJavaApi(
-            `${JAVA_URL}/loseapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}`,
+
+            `${JAVA_URL}/loseapprovedbet/${request.body.description}/${request.body.horse}/${request.body.kindeId}/${request.body.wager}`,
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
+        
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -489,7 +498,7 @@ app.post('/loseUserBet', async (request, response) => {
     
     try {
         const apiData = await getFromJavaApi( JAVA_URL + '/users', API_SECRET_KEY);
-        console.log(apiData);
+
         
         response.render('userDashboard', { user: apiData });
 
@@ -564,7 +573,7 @@ app.post('/createNewBet', async (request, response) => {
             request.body,
             API_SECRET_KEY
         );
-        console.log(betResponse);
+
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -585,7 +594,6 @@ app.post('/createNewBet', async (request, response) => {
 
 app.post('/updateBetOdds', async (request, response) => {
 
-    console.log(request.body);
 
     try {
         const betResponse = await postToJavaApi(
@@ -593,7 +601,7 @@ app.post('/updateBetOdds', async (request, response) => {
             kindeClient.getUserDetails(request),
             API_SECRET_KEY
         );
-        console.log(betResponse);
+
     } catch {
         console.log("Error sending bet");
         response.render('error');
@@ -612,15 +620,14 @@ app.post('/updateBetOdds', async (request, response) => {
 });
 
 app.post('/deleteBetFromBets', async (request, response) => {
-    console.log(request.body);
-    console.log(request.body.name);
+
     try {
         const betResponse = await postToJavaApi(
             `${JAVA_URL}/deletebet/${request.body.name}`,
             null,
             API_SECRET_KEY
         );
-        console.log(betResponse);
+
     } catch {
         console.log("Error sending bet");
         response.render('error');

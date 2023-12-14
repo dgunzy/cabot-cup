@@ -1,8 +1,6 @@
 
+<div class="container  col-md-6 mx-auto">
 
-
-
-<div class="container mt-4">
     <h2>Account Information</h2>
     <div class="account-info">
         <h4><%= user.name %></h4>
@@ -22,7 +20,9 @@
                             <input type="hidden" name="uniqueDescription" value="<%= bet.uniqueDescription %>">
                             <input type="hidden" name="horse" value="<%= bet.key %>">
 
-                            <button type="submit">Delete Bet</button>
+
+                            <button type="submit" class="btn btn-danger">Delete Bet</button>
+
                         </form>
                     </li>
                 <% }); %>
@@ -50,7 +50,9 @@
         <% if (user.transactionHistory && user.transactionHistory.length > 0) { %>
             <h4>Transaction History</h4>
             <ul>
-                <% user.transactionHistory.forEach(function(transaction) { %>
+
+                <% user.transactionHistory.reverse().forEach(function(transaction) { %>
+
                     <li><%= transaction %></li>
                 <% }); %>
             </ul>
