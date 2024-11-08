@@ -1,134 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cabot Cup</title>
-    <link rel="stylesheet" href="https://bootswatch.com/4/cosmo/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link
+      rel="stylesheet"
+      href="https://bootswatch.com/4/cosmo/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/htmx.org@1.6.1/dist/htmx.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </head>
 
-</head>
-
-<body>
-
+  <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Cabot Cup</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="yearsDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Years
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="yearsDropdown">
-                        <a class="dropdown-item" hx-get="/2019" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">2019</a>
-                        <a class="dropdown-item" hx-get="/2020" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">2020</a>
-                        <a class="dropdown-item" hx-get="/2021" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">2021</a>
-                        <a class="dropdown-item" hx-get="/2022" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">2022</a>
-                        <a class="dropdown-item" hx-get="/2023" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">2023</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="statsDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Statistics
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="statsDropdown">
-                        <a class="dropdown-item" hx-get="/listPlayers" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Players</a>
-                        <a class="dropdown-item" hx-get="/totalWinsLoss" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Match Wins / Losses</a>
-                        <a class="dropdown-item" hx-get="/singlesWinsLoss" href="#" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Singles Wins / Losses</a>
-                        <a class="dropdown-item" hx-get="/teamWinsLoss"href="#" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Team Wins / Losses</a>
-                        <a class="dropdown-item" hx-get="/percentageGraph"href="#" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Individual Match Winning %</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" hx-get="/format" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner">Format</a>
-                </li  >
-                
-                <% if (isAuthenticated && isMember) { %>
-                    <li class="nav-item">
-                        <a hx-get="/account" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a hx-get="/betPage" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bets</a>
-                    </li>
-                <% } %>
-            
-                <% if (isAuthenticated && isAdmin) { %>
-                    <li class="nav-item">
-                        <a hx-get="/betDashboard" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">Bet Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a hx-get="/userDashboard" hx-trigger="click" hx-target="#contentContainer" hx-indicator="#spinner" class="nav-link">User Dashboard</a>
-                    </li>
-                <% } %>
-            </ul>
-        </div>
+      <a class="navbar-brand" href="/">Cabot Cup</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="yearsDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Years
+            </a>
+            <div class="dropdown-menu" aria-labelledby="yearsDropdown">
+              <a
+                class="dropdown-item"
+                hx-get="/2019"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >2019</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/2020"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >2020</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/2021"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >2021</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/2022"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >2022</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/2023"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >2023</a
+              >
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="statsDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              Statistics
+            </a>
+            <div class="dropdown-menu" aria-labelledby="statsDropdown">
+              <a
+                class="dropdown-item"
+                hx-get="/listPlayers"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >Players</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/totalWinsLoss"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >Match Wins / Losses</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/singlesWinsLoss"
+                href="#"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >Singles Wins / Losses</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/teamWinsLoss"
+                href="#"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >Team Wins / Losses</a
+              >
+              <a
+                class="dropdown-item"
+                hx-get="/percentageGraph"
+                href="#"
+                hx-trigger="click"
+                hx-target="#contentContainer"
+                hx-indicator="#spinner"
+                >Individual Match Winning %</a
+              >
+            </div>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              hx-get="/format"
+              hx-trigger="click"
+              hx-target="#contentContainer"
+              hx-indicator="#spinner"
+              >Format</a
+            >
+          </li>
+        </ul>
+      </div>
     </nav>
 
     <div class="container-fluid mt-4" id="contentContainer">
-        <h2>Welcome to the Cabot Cup! </h2>
-        <div class="row">
-            <div class="col-md-6">
-                <p>Welcome to the Cabot Cup! A tournament with a rich history, prestige, and tradition. This site has statistics about the players in the cup, past years, and the format & rules of the cup.  In the years before 2019 there were several individual stroke play cups, but that format was abandoned for the team, Ryder cup style competition that it is today.</p>
-                <figure>
-                    <img src="https://d18fc2989jrcic.cloudfront.net/shot_on_14.jpg" alt="Alex shot on 14" class="img-fluid">
-                    <figcaption>Alex hitting a shot on 14</figcaption>
-                </figure>
-            </div>
-            <div class="col-md-6">
-                <figure>
-                    <img src="https://d18fc2989jrcic.cloudfront.net/16_cliffs.jpg" alt="sunset at #16" class="img-fluid">
-                    <figcaption>Sunset at #16 on Cliffs</figcaption>
-                </figure>
-            </div>
+      <h2>Welcome to the Cabot Cup!</h2>
+      <div class="row">
+        <div class="col-md-6">
+          <p>
+            Welcome to the Cabot Cup! A tournament with a rich history,
+            prestige, and tradition. This site has statistics about the players
+            in the cup, past years, and the format & rules of the cup. In the
+            years before 2019 there were several individual stroke play cups,
+            but that format was abandoned for the team, Ryder cup style
+            competition that it is today.
+          </p>
+          <figure>
+            <img
+              src="https://d18fc2989jrcic.cloudfront.net/shot_on_14.jpg"
+              alt="Alex shot on 14"
+              class="img-fluid"
+            />
+            <figcaption>Alex hitting a shot on 14</figcaption>
+          </figure>
         </div>
-        <div class="row">
-            <div class="col-md-6">
-                <figure>
-                    <img src="https://d18fc2989jrcic.cloudfront.net/walker_mau.jpg" alt="Walker mau " class="img-fluid">
-                    <figcaption>Walker and Mau enjoying a cart at Fox Harb'r</figcaption>
-                </figure>
-            </div>
-            <div class="col-md-6">
-                <figure>
-                    <img src="https://d18fc2989jrcic.cloudfront.net/hum_cup.jpg" alt="Hum drinking from cup" class="img-fluid">
-                    <figcaption>Hum enjoying a well earned drink from the cup</figcaption>
-                </figure>
-            </div>
+        <div class="col-md-6">
+          <figure>
+            <img
+              src="https://d18fc2989jrcic.cloudfront.net/16_cliffs.jpg"
+              alt="sunset at #16"
+              class="img-fluid"
+            />
+            <figcaption>Sunset at #16 on Cliffs</figcaption>
+          </figure>
         </div>
-        <figure>
-            <img src="https://d18fc2989jrcic.cloudfront.net/teams.jpg" alt="Teams of the 2022 Cup" class="img-fluid">
-            <figcaption>Teams of the 2022 Cup</figcaption>
-        </figure>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <figure>
+            <img
+              src="https://d18fc2989jrcic.cloudfront.net/walker_mau.jpg"
+              alt="Walker mau "
+              class="img-fluid"
+            />
+            <figcaption>
+              Walker and Mau enjoying a cart at Fox Harb'r
+            </figcaption>
+          </figure>
+        </div>
+        <div class="col-md-6">
+          <figure>
+            <img
+              src="https://d18fc2989jrcic.cloudfront.net/hum_cup.jpg"
+              alt="Hum drinking from cup"
+              class="img-fluid"
+            />
+            <figcaption>
+              Hum enjoying a well earned drink from the cup
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+      <figure>
+        <img
+          src="https://d18fc2989jrcic.cloudfront.net/teams.jpg"
+          alt="Teams of the 2022 Cup"
+          class="img-fluid"
+        />
+        <figcaption>Teams of the 2022 Cup</figcaption>
+      </figure>
     </div>
 
-    
-
-<footer class="footer mt-auto">
-    <div class="container">
+    <footer class="footer mt-auto">
+      <div class="container">
         <div class="row">
-            <div class="col-md-6">
-                <% if (!isAuthenticated) { %>
-                    <a href="/login" class="text-white">Sign In</a>
-                <% } else { %>
-                    <a href="/logout" class="text-white">Logout</a>
-                <% } %>
-            </div>
-            <div class="col-md-6 text-md-right">
-            </div>
+          <div class="col-md-6"></div>
+          <div class="col-md-6 text-md-right"></div>
         </div>
-    </div>
-</footer>
-</body>
+      </div>
+    </footer>
+  </body>
 </html>
