@@ -189,10 +189,9 @@ app.post("/sort-winning", (request, response) => {
   response.render("playerList", { golfers });
 });
 
-app.listen(PORT, () => {
+app.listen(3000, "0.0.0.0", () => {
   loadFromDatabase();
-
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log("Server is running on port 3000");
 });
 
 // app.get("/betPage", async (request, response) => {
